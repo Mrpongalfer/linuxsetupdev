@@ -3,9 +3,9 @@ name = "ekko-agent"
 version = "0.1.0"
 description = "Ekko: AI-Driven Development & Deployment Platform"
 readme = "README.md"
-requires-python = ">=3.11" # Changed from >=3.12
+requires-python = ">=3.11" # Changed 
 license = { text = "MIT License" } # Use text field for MIT
-authors = [ { name = "Architect Alix Feronti", email = "architect@nexus.domain" } ]
+authors = [ { name = "Architect Alix Feronti", email = "pongalfer@gmail.com" } ]
 classifiers = [
     "Development Status :: 3 - Alpha", "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License", "Programming Language :: Python :: 3",
@@ -56,7 +56,7 @@ where = ["src"]
 
 [tool.ruff]
 line-length = 88
-target-version = "py311" # Changed from py312
+target-version = "py311" # Changed 
 
 [tool.ruff.lint]
 select = ["E","W","F","I","N","UP","B","C4","A","SIM","PTH","PL","TID","TCH","RUF","BLE","S"]
@@ -70,6 +70,6 @@ dummy-variable-rgx = "^(_+|(_[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 quote-style = "double"; indent-style = "space"; skip-magic-trailing-comma = false; line-ending = "lf"
 
 [tool.mypy]
-python_version = "3.11" # Changed from 3.12
+python_version = "3.11" # Changed 
 warn_return_any = true; warn_unused_configs = true; ignore_missing_imports = true
 files = ["src/ekko"]
