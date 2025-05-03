@@ -1,0 +1,75 @@
+# File: .github/workflows/ci.yaml for Project Ekko
+name: Ekko CI Checks
+
+on:
+  push:
+    branches: [ main ] # Or your primary branch
+  pull_request:
+    branches: [ main ] # Or your primary branch
+  workflow_dispatch: # Allow manual trigger
+
+# Cancel in-progress runs for the same PR/branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint_format_typecheck_test:
+    name: Quality Checks (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Test primarily on the target python version
+        python-version: ["3.12"]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Poetry (Recommended for dependency mgmt)
+      uses: snok/install-poetry@v1
+      with:
+        virtualenvs-create: true
+        virtualenvs-in-project: true # Create .venv in project dir
+        installer-parallel: true
+
+    - name: Load cached venv
+      id: cached-poetry-dependencies
+      uses: actions/cache@v4
+      with:
+        path: .venv
+        key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+    - name: Install dependencies (including dev) via Poetry
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+      run: poetry install --with dev --no-root # Install deps listed in pyproject, including dev
+
+    - name: Run Ruff Formatter Check
+      run: |
+        source .venv/bin/activate # Activate venv created by Poetry
+        ruff format --check src/ tests/
+
+    - name: Run Ruff Linter
+      run: |
+        source .venv/bin/activate
+        ruff check src/ tests/
+
+    - name: Run MyPy Type Checker
+      run: |
+        source .venv/bin/activate
+        mypy src/
+
+    # - name: Run Pytest # Uncomment when tests are added
+    #   run: |
+    #     source .venv/bin/activate
+    #     pytest tests/ --cov=src/ekko --cov-report=xml
+    # - name: Upload coverage reports to Codecov # Optional
+    #   uses: codecov/codecov-action@v4.0.1
+    #   with:
+    #     token: ${{ secrets.CODECOV_TOKEN }} # Store token in GitHub secrets
+    #     slug: mrpongalfer/ekko # Replace with your repo slug

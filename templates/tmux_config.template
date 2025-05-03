@@ -1,0 +1,51 @@
+# ~/.tmux.conf - Basic Sensible Defaults
+
+# Improve mouse support
+set -g mouse on
+
+# Start windows and panes index at 1, not 0.
+set -g base-index 1
+setw -g pane-base-index 1
+set-option -g renumber-windows on
+
+# Increase history limit
+set -g history-limit 10000
+
+# Use Vim keybindings in copy mode
+setw -g mode-keys vi
+bind-key -T copy-mode-vi v send-keys -X begin-selection
+bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
+bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
+
+# Easy config reload
+bind r source-file ~/.tmux.conf \; display "Reloaded!"
+
+# More intuitive split keys
+bind | split-window -h -c "#{pane_current_path}" # Horizontal split, same dir
+bind - split-window -v -c "#{pane_current_path}" # Vertical split, same dir
+unbind '"'
+unbind %
+
+# Cycle panes
+# bind -n M-Left select-pane -L # Alt+Left
+# bind -n M-Right select-pane -R # Alt+Right
+# bind -n M-Up select-pane -U # Alt+Up
+# bind -n M-Down select-pane -D # Alt+Down
+# Use prefix + arrow keys as default is fine for many
+
+# Status bar customization (Example - Solarized Dark)
+set -g status-position bottom
+set -g status-justify left
+set -g status-style fg=colour136,bg=colour235 # yellow on dark grey
+set -g status-left-length 40
+set -g status-left '#[fg=colour232,bg=colour166,bold] #S #[fg=colour166,bg=colour235,nobold]' # Session name
+set -g status-right-length 40
+set -g status-right '#[fg=colour245,bg=colour235,nobold]#[fg=colour232,bg=colour245] %Y-%m-%d  %H:%M #[fg=colour255,bg=colour245,bold]#[fg=colour16,bg=colour255,bold] #H ' # Date, time, host
+setw -g window-status-current-style fg=colour16,bg=colour39,bold # Current window: black on blue
+setw -g window-status-current-format ' #I#[fg=colour249]:#[fg=colour255]#W#[fg=colour39]#F '
+setw -g window-status-style fg=colour136,bg=colour235 # Default window: yellow on dark grey
+setw -g window-status-format ' #I#[fg=colour249]:#[fg=colour244]#W#[fg=colour249]#F '
+setw -g window-status-bell-style fg=colour16,bg=colour166 # Bell: black on yellow/orange
+set -g message-style fg=colour16,bg=colour166,bold # Messages: black on yellow/orange
+
+# End of basic config

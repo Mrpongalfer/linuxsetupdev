@@ -1,0 +1,39 @@
+# Project Ekko (Powered by Omnitide Nexus)
+
+## Overview
+Ekko is an AI-driven Software Development and Deployment Platform designed to automate the software lifecycle, adhering to rigorous quality and security standards (TPC v1.3.5 / Edict v5.0 Apex).
+
+* **Architecture:** Python 3.12, FastAPI (API), Textual (TUI), Multi-LLM (Gemini, Claude, GPT-4), Ansible, Terraform, Docker, K8s (optional).
+* **Core Features:** AI Code Generation, Multi-Stage Validation (Security, Ethics, Chaos), Automated Deployment, Chaos Testing, Monitoring Integration.
+
+## Setup
+1.  Ensure Python 3.12+ and `python3.12-venv` are installed on your system.
+2.  Ensure Git, build-essential, and other prerequisites listed in the main setup script are installed.
+3.  Clone the repository.
+4.  Navigate to the project directory: `cd ekko`
+5.  Create and activate the virtual environment:
+    ```bash
+    python3.12 -m venv .venv
+    source .venv/bin/activate
+    ```
+6.  Install dependencies (including development tools):
+    ```bash
+    pip install --upgrade pip
+    pip install -e ".[dev]"
+    ```
+7.  Install pre-commit hooks:
+    ```bash
+    pre-commit install
+    ```
+8.  Configure necessary API keys and endpoints (e.g., in `config/.env` based on `config_examples/.env.example`).
+
+## Usage
+
+### CLI (Typer - via `ekko` command)
+```bash
+# Activate venv first: source .venv/bin/activate
+ekko --help
+ekko init --project-type python --ai-model gemini
+ekko validate --file src/ekko/core.py
+ekko deploy --env staging
+# ... other commands ...

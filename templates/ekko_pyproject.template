@@ -1,0 +1,108 @@
+[project]
+name = "ekko-agent" # Project name for packaging
+version = "0.1.0" # Initial version
+description = "Ekko: AI-Driven Development & Deployment Platform"
+readme = "README.md"
+requires-python = ">=3.12" # Explicitly require Python 3.12
+license = { text = "MIT License" }
+authors = [
+{ name = "Architect Alix Feronti", email = "architect@nexus.domain" },
+]
+classifiers = [
+"Development Status :: 3 - Alpha",
+"Intended Audience :: Developers",
+"License :: OSI Approved :: MIT License",
+"Programming Language :: Python :: 3",
+"Programming Language :: Python :: 3.12",
+"Operating System :: OS Independent",
+"Topic :: Software Development :: Build Tools",
+"Topic :: Software Development :: Testing :: Unit",
+"Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+# Define core runtime dependencies
+dependencies = [
+"fastapi>=0.111.0,<1.0.0",
+"uvicorn[standard]>=0.29.0,<1.0.0",
+"textual>=0.58.0,<1.0.0",
+"pydantic>=2.7.0,<3.0.0",
+"pydantic-settings>=2.2.0,<3.0.0", # Use specific version from pydantic V2 line
+"httpx>=0.27.0,<1.0.0",
+"paramiko>=3.4.0,<4.0.0", # Check latest stable Paramiko
+"cryptography>=42.0.0,<43.0.0",
+"bcrypt>=4.1.0,<5.0.0", # Check latest stable bcrypt
+"ansible-runner>=2.3.0,<3.0.0",
+"python-keyring[cli]>=25.0.0,<26.0.0", # Include cli extra for potential setup needs
+"structlog>=24.1.0,<25.0.0",
+"prometheus-client>=0.20.0,<1.0.0",
+"tomllib>=1.0.4,<2.0.0; python_version < '3.11'", # Include for <3.11 compatibility if needed elsewhere, though project requires 3.12
+"GitPython>=3.1.40,<4.0.0",
+"PyYAML>=6.0,<7.0" # Often needed alongside Ansible/configs
+]  
+
+    [project.optional-dependencies]
+    dev = [
+        "ruff>=0.4.4,<0.5.0", # Use specific Ruff version
+        "pre-commit>=3.7.0,<4.0.0",
+        "mypy>=1.9.0,<1.11.0",
+        "pytest>=8.2.0,<9.0.0", # Use specific Pytest version
+        "pytest-cov>=5.0.0,<6.0.0",
+        "pytest-asyncio>=0.23.0,<0.24.0",
+        # Add other dev tools: coverage, ipython, etc.
+    ]
+    # Define other extras if needed (e.g., for different database backends)
+    # postgres = ["psycopg2-binary>=2.9.0"]
+
+    [project.scripts]
+    # Assumes Typer app named 'app' in src/ekko/cli/main.py
+    ekko = "ekko.cli.main:app"
+
+    [build-system]
+    requires = ["setuptools>=61.0"]
+    build-backend = "setuptools.build_meta"
+
+    [tool.setuptools.packages.find]
+    where = ["src"] # Source files are in src/
+
+    # --- Tool Configurations ---
+    [tool.ruff]
+    line-length = 88
+    target-version = "py312" # Target Python 3.12 syntax
+
+    [tool.ruff.lint]
+    select = [
+        "E", "W", "F", "I", "N", "Q", "UP", "B", "C4", "A", "SIM",
+        "PTH", "PL", "TID", "TCH", "RUF", "BLE", "S", # Added more specific selections
+    ]
+    ignore = [
+        "E501", # Line length (handled by formatter)
+        "B008", # Function calls in argument defaults
+        "PLR0913", # Too many arguments
+        "PLR2004", # Magic value comparison
+        "S101", # assert used (ok in tests)
+    ]
+    # Allow unused arguments if prefixed with underscore
+    dummy-variable-rgx = "^(_+|(_[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+    [tool.ruff.lint.per-file-ignores]
+    # Allow print in CLI/TUI/main entry points, use logging elsewhere
+    "src/ekko/cli/main.py" = ["T201"]
+    "src/ekko/tui/main.py" = ["T201"]
+    "src/ekko/main.py" = ["T201"]
+    "tests/**" = ["S101"] # Allow asserts in tests
+
+    [tool.ruff.format]
+    quote-style = "double"
+    indent-style = "space"
+    skip-magic-trailing-comma = false
+    line-ending = "lf"
+
+    [tool.mypy]
+    python_version = "3.12"
+    # Start with reasonable strictness
+    warn_return_any = true
+    warn_unused_configs = true
+    ignore_missing_imports = true
+    # Explicitly check files in src/ekko
+    files = ["src/ekko"]
+    # Add plugins later if needed (e.g., pydantic)
+    # plugins = ["pydantic.mypy"]
